@@ -1,3 +1,6 @@
 [submodule "select2-master"]
 	path = select2-master
 	url = git://github.com/mkurz/select2.git
+[submodule "select2-focus-fix"]
+	path = select2-focus-fix
+	url = git://github.com/mkurz/select2.git
