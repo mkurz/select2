@@ -1360,7 +1360,7 @@ the specific language governing permissions and limitations under the Apache Lic
                         if (self.opts.selectOnBlur) {
                             self.selectHighlighted({noFocus: true});
                         }
-                        self.close();
+                        self.close({focus:true});
                         e.preventDefault();
                         e.stopPropagation();
                     }
@@ -1959,13 +1959,14 @@ the specific language governing permissions and limitations under the Apache Lic
         },
 
         // single
-        close: function () {
+        close: function (params) {
             if (!this.opened()) return;
             this.parent.close.apply(this, arguments);
 
+            params = params || {focus: true};
             this.focusser.prop("disabled", false);
 
-            if (this.opts.shouldFocusInput(this)) {
+            if (params.focus) {
                 this.focusser.focus();
             }
         },
@@ -1976,9 +1977,7 @@ the specific language governing permissions and limitations under the Apache Lic
                 this.close();
             } else {
                 this.focusser.prop("disabled", false);
-                if (this.opts.shouldFocusInput(this)) {
-                    this.focusser.focus();
-                }
+                this.focusser.focus();
             }
         },
 
@@ -1991,10 +1990,7 @@ the specific language governing permissions and limitations under the Apache Lic
         cancel: function () {
             this.parent.cancel.apply(this, arguments);
             this.focusser.prop("disabled", false);
-
-            if (this.opts.shouldFocusInput(this)) {
-                this.focusser.focus();
-            }
+            this.focusser.focus();
         },
 
         // single
@@ -2367,13 +2363,10 @@ the specific language governing permissions and limitations under the Apache Lic
             this.nextSearchTerm = this.opts.nextSearchTerm(data, this.search.val());
             this.close();
 
-            if ((!options || !options.noFocus) && this.opts.shouldFocusInput(this)) {
+            if (!options || !options.noFocus)
                 this.focusser.focus();
-            }
 
-            if (!equal(old, this.id(data))) {
-                this.triggerChange({ added: data, removed: oldData });
-            }
+            if (!equal(old, this.id(data))) { this.triggerChange({added:data,removed:oldData}); }
         },
 
         // single
@@ -3372,15 +3365,7 @@ the specific language governing permissions and limitations under the Apache Lic
         adaptDropdownCssClass: function(c) { return null; },
         nextSearchTerm: function(selectedObject, currentSearchTerm) { return undefined; },
         searchInputPlaceholder: '',
-        createSearchChoicePosition: 'top',
-        shouldFocusInput: function (instance) {
-            // Never focus the input if search is disabled
-            if (instance.opts.minimumResultsForSearch < 0) {
-                return false;
-            }
-
-            return true;
-        }
+        createSearchChoicePosition: 'top'
     };
 
     $.fn.select2.ajaxDefaults = {
